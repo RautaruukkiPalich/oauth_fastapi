@@ -37,11 +37,11 @@ async def login(
     if not HashPassword.verify(user.hashed_password, request.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="wrong password")
 
-    access_token = await create_access_token(data={'username': user.username})
+    access_token = await create_access_token(data={'id': user.id})
 
     return {
         'access_token': access_token,
         'token-type': 'bearer',
-        'user_id': user.id,
-        'username': user.username,
+        # 'user_id': user.id,
+        # 'username': user.username,
     }

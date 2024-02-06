@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,3 +36,29 @@ async def get_user_by_username(username: str, session: AsyncSession) -> models.U
     )
     return user.scalars().first()
 
+
+async def get_user_by_id(user_id: int, session: AsyncSession) -> models.User | None:
+
+    user = await session.execute(
+        select(
+            models.User
+        ).filter(
+            models.User.id == user_id
+        )
+    )
+    return user.scalars().first()
+
+
+async def change_username(user: models.User, username: str, session: AsyncSession):
+    user.username = username
+    await session.flush()
+    await session.commit()
+    return user
+
+
+async def change_user_password(user: models.User, password: str, session: AsyncSession):
+    user.hashed_password = HashPassword.bcrypt(password)
+    user.last_password_change = datetime.datetime.now()
+    await session.flush()
+    await session.commit()
+    return user

@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE
 from user import models
-from user.crud import get_user_by_username
+from user.crud import get_user_by_id
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth/login')
 
@@ -35,15 +35,15 @@ async def get_current_user(token: str, session: AsyncSession) -> models.User:
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        decoded_username: str = payload.get('username')
+        decoded_id: int = payload.get('id')
 
-        if not decoded_username:
+        if not decoded_id:
             raise credentials_exception
     except Exception as e:
         print(e)
         raise credentials_exception
 
-    user = await get_user_by_username(decoded_username, session)
+    user = await get_user_by_id(decoded_id, session)
 
     if not user:
         raise credentials_exception
