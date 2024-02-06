@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "oauth-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["palich <rautaruukkipalich@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109.2"
+sqlalchemy = "^2.0.25"
+asyncpg = "^0.29.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

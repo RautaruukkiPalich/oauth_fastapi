@@ -1,0 +1,61 @@
+version: '3.6'
+
+services:
+  database:
+    container_name: postgres_container
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: "${DB_NAME:-postgres}"
+      POSTGRES_USER: "${DB_USER:-postgres}"
+      POSTGRES_PASSWORD: "${DB_PASS:-postgres}"
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    restart: always
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}'
+      PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD:-admin}'
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - database
+    links:
+      - database
+    restart: always
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    networks:
+      - postgres
+
+  bot:
+    container_name: app_container
+    build: .
+    environment:
+      DB_HOST: database
+      DB_USER: "${DB_USER:-postgres}"
+      DB_PASS: "${DB_PASS:-postgres}"
+      DB_NAME: "${DB_NAME:-postgres}"
+    ports:
+      - "443:443"
+    restart: always
+    depends_on:
+      - database
+    networks:
+      - postgres
+
+volumes:
+    postgres:
+    pgadmin:
+    redis:
+    bot:
+
+networks:
+  postgres:
+    driver: bridge
