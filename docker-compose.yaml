@@ -5,7 +5,7 @@ services:
     container_name: postgres_container
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: "${DB_NAME:-postgres}"
+      POSTGRES_DB: "${DB_NAME:-oauth_postgres}"
       POSTGRES_USER: "${DB_USER:-postgres}"
       POSTGRES_PASSWORD: "${DB_PASS:-postgres}"
     ports:
@@ -23,7 +23,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}'
       PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD:-admin}'
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - "${PGADMIN_PORT:-5050}:5050"
     depends_on:
       - database
     links:
@@ -34,7 +34,7 @@ services:
     networks:
       - postgres
 
-  bot:
+  app:
     container_name: app_container
     build: .
     environment:
@@ -43,7 +43,7 @@ services:
       DB_PASS: "${DB_PASS:-postgres}"
       DB_NAME: "${DB_NAME:-postgres}"
     ports:
-      - "443:443"
+      - "${HOST_PORT:-8000}:8000"
     restart: always
     depends_on:
       - database
