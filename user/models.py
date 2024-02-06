@@ -5,16 +5,16 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
-from oauth_fastapi.db.database import Base
+from db.database import Base
 
 
 class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    username: Mapped[str] = mapped_column(nullable=False)  # , blank=False)
-    password: Mapped[str] = mapped_column(nullable=False)  # , blank=False)
-    is_active: Mapped[bool] = mapped_column(default=True)  # , nullable=False)
+    username: Mapped[str] = mapped_column(unique=True, nullable=False)  # , blank=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)  # , blank=False)
+    last_password_change: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
 

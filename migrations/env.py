@@ -5,11 +5,10 @@ from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from config import DB_URL, DB_NAME
-from oauth_fastapi.db.database import Base
-from oauth_fastapi.db.models import (
-    User,
-)
+from config import DB_URL
+from db.database import Base
+
+from user.models import User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

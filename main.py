@@ -1,24 +1,16 @@
 import uvicorn
-from fastapi import APIRouter, Depends, FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI
 
+from auth.routes import auth_router
 from config import HOST_ADD, HOST_PORT
-from oauth_fastapi.db.database import get_async_session
+from user.routes import user_router
 
 app = FastAPI()
-router = APIRouter()
-
-
-@app.get('/')
-async def index(
-        session: AsyncSession = Depends(get_async_session),
-):
-    return {'ping': 'pong'}
+app.include_router(auth_router)
+app.include_router(user_router)
 
 
 if __name__ == '__main__':
-
-    app.include_router(router)
 
     uvicorn.run(
         "__main__:app",
@@ -26,3 +18,5 @@ if __name__ == '__main__':
         port=int(HOST_PORT),
         reload=True
         )
+
+

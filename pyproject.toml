@@ -12,6 +12,10 @@ sqlalchemy = "^2.0.25"
 asyncpg = "^0.29.0"
 uvicorn = "^0.27.0.post1"
 alembic = "^1.13.1"
+passlib = "^1.7.4"
+pyjwt = "^2.8.0"
+bcrypt = "^4.1.2"
+python-multipart = "^0.0.7"
 
 
 [build-system]
