@@ -14,9 +14,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)  # , blank=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)  # , blank=False)
-    last_password_change: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
-    created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now)
-    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.now, onupdate=datetime.now)
+    last_password_change: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     __table_args__ = (
         PrimaryKeyConstraint('id', name='user_id'),
