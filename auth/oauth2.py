@@ -27,24 +27,38 @@ async def create_access_token(data: dict, expires_delta: Optional[timedelta] = N
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-async def get_current_user(token: str, session: AsyncSession = Depends(get_async_session)) -> models.User:
+async def decode_access_token(
+        token: str,
+        credentials_exception: HTTPException,
+        session: AsyncSession,
+) -> models.User:
+
+    try:
+        payload: dict = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.PyJWTError as e:
+        credentials_exception.detail += f": {'; '.join(e.args)}"
+        raise credentials_exception
+
+    decoded_id: int = payload.get('id')
+
+    if not decoded_id:
+        raise credentials_exception
+
+    return await get_user_by_id(decoded_id, session)
+
+
+async def get_current_user(
+        token: str = Depends(oauth2_schema),
+        session: AsyncSession = Depends(get_async_session),
+) -> models.User:
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='could not validate credentials',
         headers={'WWW-Authenticate': 'Bearer'},
     )
 
-    try:
-        payload: dict = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        decoded_id: int = payload.get('id')
-    except jwt.PyJWTError as e:
-        credentials_exception.detail += f": {'; '.join(e.args)}"
-        raise credentials_exception
-
-    if not decoded_id:
-        raise credentials_exception
-
-    user: models.User = await get_user_by_id(decoded_id, session)
+    user: models.User = await decode_access_token(token, credentials_exception, session)
 
     if not user:
         raise credentials_exception
