@@ -38,13 +38,12 @@ async def get_user_by_username(username: str, session: AsyncSession) -> models.U
 
 async def get_user_by_id(user_id: int, session: AsyncSession) -> models.User | None:
 
-    user = await session.execute(
-        select(
-            models.User
-        ).filter(
-            models.User.id == user_id
-        )
+    stmt = select(
+        models.User
+    ).filter(
+        models.User.id == user_id
     )
+    user = await session.execute(stmt)
     return user.scalars().first()
 
 
@@ -64,11 +63,11 @@ async def change_user_password(user: models.User, password: str, session: AsyncS
 
 
 async def username_is_exist(username: str, session: AsyncSession) -> models.User | None:
-    user = await session.execute(
-        select(
-            models.User
-        ).filter(
-            models.User.username == username
-        )
+
+    stmt = select(
+        models.User
+    ).filter(
+        models.User.username == username
     )
+    user = await session.execute(stmt)
     return user.scalars().first()
