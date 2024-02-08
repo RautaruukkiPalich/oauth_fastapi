@@ -19,5 +19,5 @@ class UserData(User):
 
 class ChangePassword(BaseModel):
     old_password: str
-    new_password1: str
-    new_password2: str
+    password1: str
+    password2: str
