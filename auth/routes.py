@@ -7,6 +7,7 @@ from auth.oauth2 import create_access_token
 from db.database import get_async_session
 from users import schemas
 from users.crud import get_user_by_username, create_user
+from users.schemas import UserAuth
 from validators.password_validator import check_valid_password
 from validators.username_validator import check_valid_username
 
@@ -39,10 +40,11 @@ async def register(
 
 @auth_router.post('/login', status_code=status.HTTP_200_OK)
 async def login(
-    request: OAuth2PasswordRequestForm = Depends(),
+    # request: OAuth2PasswordRequestForm = Depends(),
+    request: UserAuth,
     session: AsyncSession = Depends(get_async_session),
 ) -> dict:
-    exception = HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    exception = HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     user = await get_user_by_username(request.username, session)
 
     if not user:
